@@ -122,7 +122,7 @@ class EventServiceImplTest {
 	
 	
 	@Test
-	void testaddStudentToEvent_presentStudents() throws StudyUpException {
+	void testAddStudentToEvent_presentStudents() throws StudyUpException {
 		// Params for our student
 		String firstName = "Barack";
 		String lastName = "Obama";
@@ -162,12 +162,23 @@ class EventServiceImplTest {
 		assertEquals(firstName, allStudents.get(1).getFirstName());
 		assertEquals(lastName, allStudents.get(1).getLastName());
 		assertEquals(email, allStudents.get(1).getEmail());
-		assertEquals(id, allStudents.get(1).getId());
-				
+		assertEquals(id, allStudents.get(1).getId());			
 	}
 	
 	@Test
-	void testaddStudentToEvent_noStudents() throws StudyUpException {
+	void testAddStudentToEvent_emptyStudents() throws StudyUpException {
+		// Test to make sure that when we insert a null (no student) 
+		// into this method, it throws a StudyUpException
+		Assertions.assertThrows(StudyUpException.class, () -> {
+			eventServiceImpl.addStudentToEvent(null, 1);
+		  });
+	}
+	
+	@Test
+	void testAddStudentToEvent_firstStudents() throws StudyUpException {
+		// Test to make sure that when we are the very first student
+		// in the list, we are properly inserted into the list
+		
 		// Create a new event with no students
 		int eventId = 2;
 		Event event = new Event();
@@ -204,7 +215,7 @@ class EventServiceImplTest {
 	}
 	
 	@Test
-	void testgetActiveEvents_pastDate() throws StudyUpException {
+	void testGetActiveEvents_pastDate() throws StudyUpException {
 		// The getActiveEvents function should only return back events
 		// that are in the future
 		Date dateInPast = new Date();
@@ -227,7 +238,7 @@ class EventServiceImplTest {
 	}
 	
 	@Test
-	void testgetPastEvents_pastDate() throws StudyUpException {
+	void testGetPastEvents_pastDate() throws StudyUpException {
 		// Completely delete all events (there should be no Event 1)
 		eventServiceImpl.deleteEvent(1);
 		
@@ -252,7 +263,7 @@ class EventServiceImplTest {
 	}
 	
 	@Test
-	void testdeleteEvent_goodCase() throws StudyUpException {
+	void testDeleteEvent_eventExists() throws StudyUpException {
 		// Just delete the Event 1 which is created in @BeforeEach
 		Event ret_event = eventServiceImpl.deleteEvent(1);
 		
@@ -264,5 +275,14 @@ class EventServiceImplTest {
 		int total_events_count = eventServiceImpl.getActiveEvents().size()
 				+ eventServiceImpl.getPastEvents().size();
 		assertEquals(0, total_events_count);
+	}
+	
+	@Test
+	void testDeleteEvent_eventDoesntExist() throws StudyUpException {
+		// Just delete an event that does not exist. Should return null
+		Event ret_event = eventServiceImpl.deleteEvent(5);
+		
+		// Make sure that ret_event was null since event 5 doesn't exist
+		assertNull(ret_event);
 	}
 }
