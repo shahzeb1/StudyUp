@@ -3,6 +3,7 @@ package edu.studyup.serviceImpl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -165,12 +166,74 @@ class EventServiceImplTest {
 		assertEquals(id, allStudents.get(1).getId());			
 	}
 	
+	@Test 
+	void testAddStudentToEvent_threeStudents() throws StudyUpException {
+		// Test that we can not have more than 2 students in an event
+		
+		// Params for our student #2
+		String firstName = "Barack";
+		String lastName = "Obama";
+		String email = "obama@hotmail.com";
+		int id = 2;
+				
+		//Create Student
+		Student student = new Student();
+		student.setFirstName(firstName);
+		student.setLastName(lastName);
+		student.setEmail(email);
+		student.setId(id);
+		
+		// Add this new student to event 1
+		int eventId = 1;
+		Event ret_event = eventServiceImpl.addStudentToEvent(student, eventId);
+		
+		// Make sure that John and Obama are in our Event 1
+		assertEquals(2, ret_event.getStudents().size());
+		
+		// Now we'll create a new student and attempt to insert him
+		String firstName2 = "Donald";
+		String lastName2 = "Trump";
+		String email2 = "trump@hotmail.com";
+		int id2 = 3;
+				
+		// Create Student #3
+		Student student2 = new Student();
+		student2.setFirstName(firstName2);
+		student2.setLastName(lastName2);
+		student2.setEmail(email2);
+		student2.setId(id2);
+		
+		// Make sure we throw an error now that we'll be inserting 
+		// our third student
+		Assertions.assertThrows(StudyUpException.class, () -> {
+			eventServiceImpl.addStudentToEvent(student2, eventId);
+		  });
+	}
+	
 	@Test
 	void testAddStudentToEvent_emptyStudents() throws StudyUpException {
 		// Test to make sure that when we insert a null (no student) 
 		// into this method, it throws a StudyUpException
 		Assertions.assertThrows(StudyUpException.class, () -> {
 			eventServiceImpl.addStudentToEvent(null, 1);
+		  });
+	}
+	
+	@Test
+	void testAddStudentToEvent_emptyEvent() throws StudyUpException {
+		// Test to make sure that when we insert a student into
+		// an event which does not exist, we throw StudyUpException
+	
+		// Create our student
+		Student student = new Student();
+		student.setFirstName("James");
+		student.setLastName("Bond");
+		student.setEmail("bond@hotmail.com");
+		student.setId(1);
+		
+		// Make sure the error was tossed since event 5 doesn't exist
+		Assertions.assertThrows(StudyUpException.class, () -> {
+			eventServiceImpl.addStudentToEvent(student, 5);
 		  });
 	}
 	
@@ -258,8 +321,35 @@ class EventServiceImplTest {
 		
 		// Check and ensure that there should only 2 events in
 		// getActiveEvents. 
-		// 1 = Event 1, 2 = Event 2
 		assertEquals(1, eventServiceImpl.getPastEvents().size());
+	}
+	
+	@Test
+	void testGetPastEvents_futureDate() throws StudyUpException {
+		// Test getPastEvents() to make sure events which are happening
+		// in the future do not appear 
+		
+		// Completely delete all events (there should be no Event 1)
+		eventServiceImpl.deleteEvent(1);
+		
+		// Get the past events for when the date is in the past
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 2020); // Sets date to year 2020
+		Date dateInFuture = cal.getTime();
+		
+		// Insert an Event 2 which is in the future (in the year 2020)
+		int eventId = 2;
+		Event event = new Event();
+		event.setEventID(eventId);
+		event.setDate(dateInFuture);
+		event.setName("Event 2");
+		Location location = new Location(-100, 100);
+		event.setLocation(location);
+		DataStorage.eventData.put(event.getEventID(), event);
+		
+		// Check and ensure that there should only be 1 event in
+		// getActiveEvents.
+		assertEquals(0, eventServiceImpl.getPastEvents().size());
 	}
 	
 	@Test
