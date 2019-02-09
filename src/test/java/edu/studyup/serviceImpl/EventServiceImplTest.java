@@ -77,14 +77,22 @@ class EventServiceImplTest {
 		  });
 	}
 	
-	// Start of the tests written for HW 2
+	/**
+	 * 
+	 * Start of the tests written for HW 2
+	 * 
+	 */
 	
+	
+	/**
+	 * This test makes sure that when the name of the new event is = 20 chars
+	 * it should not throw an error since maximum allowed length for a 
+	 * new eventName is 20 chars = 20 is good
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
-	void testUpdateEventName_length_goodCase() throws StudyUpException {
-		// This test makes sure that when the name of the new event is = 20 chars
-		// it should not throw an error since maximum allowed length for a 
-		// new eventName is 20 chars = 20 is good
-		
+	void testUpdateEventName_length_goodCase() throws StudyUpException {		
 		int eventID = 1;
 		String longName = "ABCDEFGHIJKLMNOPQRST";
 		
@@ -100,12 +108,15 @@ class EventServiceImplTest {
 		assertEquals(longName, DataStorage.eventData.get(eventID).getName());
 	}
 	
+	/**
+	 * This test makes sure that when the name of the new event is > 20 chars
+	 * it should  throw an error since maximum allowed length for a new eventName 
+	 * is 20 chars.
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
-	void testUpdateEventName_length_badCase() throws StudyUpException {
-		// This test makes sure that when the name of the new event is > 20 chars
-		// it should  throw an error since maximum allowed length for a 
-		// new eventName is 20 chars.
-		
+	void testUpdateEventName_length_badCase() throws StudyUpException {		
 		int eventID = 1;
 		String longName = "ABCDEFGHIJKLMNOPQRSTU";
 		
@@ -121,7 +132,12 @@ class EventServiceImplTest {
 		assertEquals("Event 1", DataStorage.eventData.get(eventID).getName());
 	}
 	
-	
+	/**
+	 * Testing addStudentToEvent() to ensure that after adding a student
+	 * there are two students, and the properties of each student are retained
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testAddStudentToEvent_presentStudents() throws StudyUpException {
 		// Params for our student
@@ -166,9 +182,14 @@ class EventServiceImplTest {
 		assertEquals(id, allStudents.get(1).getId());			
 	}
 	
+	
+	/**
+	 * Test that we can not have more than 2 students in an event
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test 
 	void testAddStudentToEvent_threeStudents() throws StudyUpException {
-		// Test that we can not have more than 2 students in an event
 		
 		// Params for our student #2
 		String firstName = "Barack";
@@ -210,19 +231,28 @@ class EventServiceImplTest {
 		  });
 	}
 	
+	/**
+	 * Test to make sure that when we insert a null (no student) 
+	 * into this method, it throws a StudyUpException
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testAddStudentToEvent_emptyStudents() throws StudyUpException {
-		// Test to make sure that when we insert a null (no student) 
-		// into this method, it throws a StudyUpException
+		
 		Assertions.assertThrows(StudyUpException.class, () -> {
 			eventServiceImpl.addStudentToEvent(null, 1);
 		  });
 	}
 	
+	/**
+	 * Test to make sure that when we insert a student into
+	 * an event which does not exist, we throw StudyUpException
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testAddStudentToEvent_emptyEvent() throws StudyUpException {
-		// Test to make sure that when we insert a student into
-		// an event which does not exist, we throw StudyUpException
 	
 		// Create our student
 		Student student = new Student();
@@ -237,10 +267,14 @@ class EventServiceImplTest {
 		  });
 	}
 	
+	/**
+	 * Test to make sure that when we are the very first student
+	 * in the list, we are properly inserted into the list
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testAddStudentToEvent_firstStudents() throws StudyUpException {
-		// Test to make sure that when we are the very first student
-		// in the list, we are properly inserted into the list
 		
 		// Create a new event with no students
 		int eventId = 2;
@@ -277,10 +311,15 @@ class EventServiceImplTest {
 		assertEquals(1, ret_event.getStudents().size());
 	}
 	
+	/**
+	 * The getActiveEvents function should only return back events 
+	 * that are in the future
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testGetActiveEvents_pastDate() throws StudyUpException {
-		// The getActiveEvents function should only return back events
-		// that are in the future
+
 		Date dateInPast = new Date();
 		dateInPast.setTime(0); // Sets date to 1969
 		
@@ -300,6 +339,12 @@ class EventServiceImplTest {
 		assertEquals(0, eventServiceImpl.getActiveEvents().size());
 	}
 	
+	/**
+	 * Tests getPastEvents() to test that if an event is happening at a past 
+	 * date, then it is returned.
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testGetPastEvents_pastDate() throws StudyUpException {
 		// Completely delete all events (there should be no Event 1)
@@ -324,10 +369,14 @@ class EventServiceImplTest {
 		assertEquals(1, eventServiceImpl.getPastEvents().size());
 	}
 	
+	/**
+	 * Tests getPastEvents() to make sure events which are happening
+	 * in the future do not appear 
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testGetPastEvents_futureDate() throws StudyUpException {
-		// Test getPastEvents() to make sure events which are happening
-		// in the future do not appear 
 		
 		// Completely delete all events (there should be no Event 1)
 		eventServiceImpl.deleteEvent(1);
@@ -352,6 +401,11 @@ class EventServiceImplTest {
 		assertEquals(0, eventServiceImpl.getPastEvents().size());
 	}
 	
+	/**
+	 * Tests deleteEvent() to make sure that an event that gets deleted is actually deleted
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testDeleteEvent_eventExists() throws StudyUpException {
 		// Just delete the Event 1 which is created in @BeforeEach
@@ -367,6 +421,11 @@ class EventServiceImplTest {
 		assertEquals(0, total_events_count);
 	}
 	
+	/**
+	 * Tests to make sure that when deleting a non-existent event, null is returned
+	 * 
+	 * @throws StudyUpException
+	 */
 	@Test
 	void testDeleteEvent_eventDoesntExist() throws StudyUpException {
 		// Just delete an event that does not exist. Should return null
