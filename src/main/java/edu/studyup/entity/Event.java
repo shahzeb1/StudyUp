@@ -1,5 +1,6 @@
 package edu.studyup.entity;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +47,10 @@ public class Event {
 	}
 
 	public Date getDate() {
-		return date;
+		// Bug fix: Deep copy the date so it's immutable
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.getTime();
 	}
 
 	public void setDate(Date date) {
