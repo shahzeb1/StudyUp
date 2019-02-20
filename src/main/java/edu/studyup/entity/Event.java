@@ -54,7 +54,8 @@ public class Event {
 	}
 
 	public void setDate(Date date) {
-		this.date = date;
+		// Bug fix: deep copy the date so it's immutable
+		this.date = new Date(date.getTime());
 	}
 
 	public int getEventID() {

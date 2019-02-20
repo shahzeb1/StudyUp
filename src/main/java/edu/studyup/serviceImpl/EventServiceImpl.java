@@ -34,10 +34,11 @@ public class EventServiceImpl implements EventService {
 		Map<Integer, Event> eventData = DataStorage.eventData;
 		List<Event> activeEvents = new ArrayList<>();
 		
-		for (Integer key : eventData.keySet()) {
-			Event ithEvent= eventData.get(key);
-			activeEvents.add(ithEvent);
+		// Bug fix: access map with an interator on the entrySet of map instead of keySet, to avoid map.get(key)
+		for (Map.Entry<Integer, Event> entry : eventData.entrySet()) {
+			activeEvents.add(entry.getValue());
 		}
+		
 		return activeEvents;
 	}
 
