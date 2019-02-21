@@ -20,16 +20,16 @@
 			  <groupId>com.github.spotbugs</groupId>
 			  <artifactId>spotbugs-maven-plugin</artifactId>
 			  <version>3.1.10</version>
+              <configuration>
+                <effort>Max</effort>
+                <threshold>Low</threshold>
+                <xmlOutput>true</xmlOutput>
+              </configuration>
 			  <dependencies>
 			    <dependency>
 			      <groupId>com.github.spotbugs</groupId>
 			      <artifactId>spotbugs</artifactId>
 			      <version>3.1.11</version>
-                  <configuration>
-                      <effort>Max</effort>
-                      <threshold>Low</threshold>
-                      <xmlOutput>true</xmlOutput>
-                  </configuration>
 			    </dependency>
 			  </dependencies>
 			</plugin>
