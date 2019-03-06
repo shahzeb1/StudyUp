@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+# Check to make sure that an argument was passed in
+if [-z "$0"]; then
+    echo "[error] usage: hotswap.sh <new redis url>"
+    exit 1
+fi
+
 # Get the current redis url:
 current=$(sed -En 's/.*server\s(.+?):6379;.*/\1/p' /etc/nginx/nginx.conf) 
 
@@ -15,4 +21,5 @@ if ["$current" -ne "$0"]; then
 else
     # Don't replace, instead print an error
     echo "[error] couldn't replace $current with $0 since they're the same url"
+    exit 1
 fi
