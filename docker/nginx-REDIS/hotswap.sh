@@ -16,13 +16,13 @@ current=$(sed -En 's/.*server\s(.+?):6379;.*/\1/p' $nginx_config)
 
 # If statement for extra credit:
 if [[ "$current" != "$1" ]]; then
-    echo "[info] replacing $current with $1"
+    echo "[info] replacing '$current' with '$1'"
     # Replace the redis URL if the arg $1 url is different than $current
-    sed -ivE "s/server\s(.+?):6379/server $1:6379/" $nginx_config 
+    sed -i'' -E "s/server\s(.+?):6379/server $1:6379/" $nginx_config 
     nginx -s reload
     echo "[info] successfully replaced redis url and reloaded nginx config"
 else
     # Don't replace, instead print an error
-    echo "[error] couldn't replace $current with $1 since they're the same url"
+    echo "[error] couldn't replace url with '$1' because it's already set"
     exit 1
 fi
